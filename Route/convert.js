@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const axios = require('axios');
 
 // Config Multer
 let DIR = './Image';
@@ -21,10 +22,9 @@ var storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage }).single('image');
-
-const CloudConvert = require('cloudconvert');
 const apiKEY = process.env.CLOUD_KEY;
+const upload = multer({ storage: storage }).single('image');
+const CloudConvert = require('cloudconvert');
 
 const cloudConvert = new CloudConvert(apiKEY);
 
@@ -39,7 +39,6 @@ router.post('', async (req, res) => {
         const type = req.body.type;
         const group = req.body.group;
         const filename = req.file.filename;
-
         let job = await cloudConvert.jobs.create({
           tasks: {
             'import-my-file': {
@@ -58,7 +57,7 @@ router.post('', async (req, res) => {
             },
           },
         });
-
+        console.log(job);
         res.json({ err: 0, job });
       }
     });
